@@ -1,12 +1,11 @@
 <template>
   <div id="app">
+    <Header />
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/register">Register</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/secret">Secret</router-link>
+      <router-link to="/">Home</router-link> | <router-link to="/register">Register</router-link> |
+      <router-link to="/login">Login</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -32,3 +31,13 @@
   }
 }
 </style>
+
+<script>
+import Header from './components/Header.vue';
+
+export default {
+  components: {
+    Header,
+  },
+};
+</script>
