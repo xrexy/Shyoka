@@ -6,8 +6,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-
-import './store/authListener';
+import '@/store/authListener';
 
 Vue.prototype.$axios = axios;
 
