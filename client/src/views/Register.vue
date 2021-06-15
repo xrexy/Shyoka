@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="error" class="error">{{ error.message }}</div>
-    <form @submit.prevent="pressed">
+    <form @submit.prevent="register">
       Register
       <div class="email">
         <input type="email" placeholder="Email" v-model="email" />
@@ -14,30 +14,19 @@
   </div>
 </template>
 <script>
-import firebase from 'firebase/app';
-
-require('firebase/auth');
+import { mapState } from 'vuex';
 
 export default {
   methods: {
-    async pressed() {
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email.trim(), this.password)
-        .then(() => {
-          this.$router.replace({ name: 'Home' });
-        })
-        .catch((e) => {
-          this.error = e;
-          console.log(e);
-        });
+    register() {
+      this.$store.dispatch('auth/register', { email: this.email.trim(), password: this.password });
     },
   },
+  computed: mapState('auth', ['error']),
   data() {
     return {
       email: '',
       password: '',
-      error: '',
     };
   },
 };

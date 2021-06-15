@@ -1,7 +1,7 @@
 <template>
   <div>
     Login
-    <form @submit.prevent="pressed">
+    <form @submit.prevent="login">
       <div class="login">
         <input type="email" placeholder="Login" v-model="email" />
       </div>
@@ -18,30 +18,20 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
-
-require('firebase/auth');
+import { mapState } from 'vuex';
 
 export default {
+  methods: {
+    login() {
+      this.$store.dispatch('auth/login', { email: this.email.trim(), password: this.password });
+    },
+  },
+  computed: mapState('auth', ['error']),
   data() {
     return {
       email: '',
       password: '',
-      error: '',
     };
-  },
-  methods: {
-    async pressed() {
-      await firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          this.$router.replace({ name: 'Secret' });
-        })
-        .catch((e) => {
-          this.error = e;
-        });
-    },
   },
 };
 </script>

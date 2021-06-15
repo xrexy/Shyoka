@@ -1,41 +1,18 @@
 <template>
   <div>
-    <span v-if="loggedIn">Logged in</span>
+    <span v-if="isLoggedIn">Logged in</span>
     <span v-else>Not logged in Sadge</span>
     <div>
-      <button @click="signOut">Sign out</button>
+      <button @click="logout">Sign out</button>
     </div>
   </div>
 </template>
 
 <script>
-import firebase from 'firebase/app';
-
-require('firebase/auth');
+import { mapActions, mapState } from 'vuex';
 
 export default {
-  created() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) this.isLoggedIn = true;
-    });
-  },
-  methods: {
-    async signOut() {
-      await firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$router.replace({ name: 'Login' });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-  },
-  data() {
-    return {
-      loggedIn: false,
-    };
-  },
+  computed: mapState('auth', ['user', 'isLoggedIn']),
+  methods: mapActions('auth', ['logout']),
 };
 </script>
