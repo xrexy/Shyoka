@@ -1,23 +1,138 @@
 <template>
   <div>
     <header class="level">
-      <a href="#" class="level-item"><img src="../assets/logo.png" alt="SHYOKA" class="logo"/></a>
+      <a href="/" class="level-item"><img src="../assets/logo.png" alt="SHYOKA" class="logo"/></a>
       <nav class="level-item">
         <ul class="nav__links">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Schools</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/schools">Schools</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/social">Social</a></li>
         </ul>
       </nav>
-      <div class="level-item">
-        <a href="#"><button>Login</button></a>
-        <a href="#"><button class="is-danger">Register</button></a>
+      <div class="level-item" v-if="!isLoggedIn">
+        <b-dropdown position="is-bottom-left" append-to-body aria-role="menu" trap-focus>
+          <template #trigger>
+            <a class="level-item" role="button">
+              <button>Login</button>
+            </a>
+          </template>
+
+          <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
+            <form @submit.prevent="login">
+              <div class="modal-card" style="width:300px;">
+                <section class="modal-card-body">
+                  <b-field v-if="error">
+                    <span style="font-size: 14px; color: red;">{{ error }}</span>
+                  </b-field>
+                  <b-field label="Email">
+                    <b-input type="email" placeholder="Your email" v-model="email" required>
+                    </b-input>
+                  </b-field>
+
+                  <b-field label="Password">
+                    <b-input
+                      type="password"
+                      password-reveal
+                      placeholder="Your password"
+                      v-model="password"
+                      required
+                    >
+                    </b-input>
+                  </b-field>
+                </section>
+                <footer class="modal-card-foot">
+                  <b-button @click.prevent="login" label="Login" type="is-primary" />
+                  <!-- <span style="font-size: 16px;">or</span> -->
+                  <a href="/register"><button type="button" class="is-danger">Register</button></a>
+                </footer>
+              </div>
+            </form>
+          </b-dropdown-item>
+        </b-dropdown>
+
+        <a href="/register"><button class="is-danger">Register</button></a>
+      </div>
+      <div class="level-item" v-if="isLoggedIn">
+        <b-dropdown position="is-bottom-left" append-to-body aria-role="menu">
+          <template #trigger>
+            <a class="level-item" role="button">
+              <span>{{ user.email }}</span>
+              <b-icon icon="menu-down"></b-icon>
+            </a>
+          </template>
+
+          <b-dropdown-item style="outline: 0;" custom>
+            Logged as <b>{{ user.email }}</b>
+          </b-dropdown-item>
+
+          <hr class="dropdown-divider" />
+
+          <b-dropdown-item class="user-dropdown-item" has-link custom>
+            <a href="/profile">
+              <b-icon icon="account"></b-icon>
+              Profile
+            </a>
+          </b-dropdown-item>
+          <b-dropdown-item class="user-dropdown-item" has-link custom>
+            <a href="/settings">
+              <b-icon icon="cog"></b-icon>
+              Settings
+            </a>
+          </b-dropdown-item>
+
+          <hr class="dropdown-divider" />
+
+          <b-dropdown-item class="user-dropdown-item" custom>
+            <div @click.prevent="logout">
+              <b-icon icon="logout"></b-icon>
+              Logout
+            </div>
+          </b-dropdown-item>
+        </b-dropdown>
       </div>
     </header>
   </div>
 </template>
 
+<script>
+import { mapState } from 'vuex';
+
+export default {
+  methods: {
+    async login() {
+      await this.$store.dispatch('auth/login', {
+        email: this.email.trim(),
+        password: this.password,
+      });
+      this.email = '';
+      this.password = '';
+    },
+    logout() {
+      console.log('logout');
+      this.$store.dispatch('auth/logout');
+    },
+  },
+  computed: mapState('auth', ['error', 'isLoggedIn', 'user']),
+  data() {
+    return {
+      email: '',
+      password: '',
+    };
+  },
+};
+</script>
+
 <style scoped>
+.user-dropdown-item {
+  outline: 0;
+}
+
+.user-dropdown-item:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
 li,
 a,
 button {
@@ -30,7 +145,7 @@ button {
 
 header {
   align-items: center;
-  background-color: #24252a;
+  background-color: #1a1b1f;
   padding: 15px;
 }
 
@@ -44,7 +159,13 @@ header {
 
 .nav__links li {
   display: inline-block;
-  margin-left: 20px;
+  padding: 0px 15px;
+  border-right: 2px solid white;
+}
+
+.nav__links li:last-child {
+  padding-right: 0px;
+  border: none;
 }
 
 .nav__links li a {
@@ -66,6 +187,7 @@ button {
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.2s ease 0s;
+  outline: none;
 }
 
 button:hover {
