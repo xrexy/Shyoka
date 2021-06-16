@@ -14,20 +14,16 @@ const routes = [
     component: Home,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue'),
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('../views/Register.vue'),
-  },
-  {
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue'),
     // meta: { requiresLogin: true },
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../views/Profile.vue'),
+    meta: { requiresLogin: true },
   },
 
   { path: '*', redirect: '/' },
@@ -44,7 +40,7 @@ router.beforeEach((to, from, next) => {
     to.matched.some((record) => record.meta.requiresLogin)
     && !store._modules.root._rawModule.modules.auth.state.isLoggedIn
   ) {
-    next('/login');
+    next('/');
   } else {
     next();
   }

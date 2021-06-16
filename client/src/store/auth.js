@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 import firebase from '@/db/firebase';
 
 require('firebase/auth');
@@ -38,6 +40,9 @@ const actions = {
     await firebase
       .auth()
       .createUserWithEmailAndPassword(payload.email, payload.password)
+      .then((res) => res.user.updateProfile({
+        displayName: payload.username,
+      }))
       .catch((error) => {
         commit('setError', error);
       });

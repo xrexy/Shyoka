@@ -12,6 +12,5 @@ export default {};
 #home {
   height: 100vh;
   min-height:100%;
-  background-color: #0e0813;
 }
 </style>

@@ -41,29 +41,80 @@
                     </b-input>
                   </b-field>
                 </section>
-                <footer class="modal-card-foot">
-                  <b-button @click.prevent="login" label="Login" type="is-primary" />
+                <footer class="modal-card-foot columns is-centered">
+                  <b-button @click.prevent="login" label="Login" type="is-primary" class="column" />
                   <!-- <span style="font-size: 16px;">or</span> -->
-                  <a href="/register"><button type="button" class="is-danger">Register</button></a>
+                  <!-- <a href="/register">
+                  <button type="button" class="is-danger">Register</button></a> -->
                 </footer>
               </div>
             </form>
           </b-dropdown-item>
         </b-dropdown>
 
-        <a href="/register"><button class="is-danger">Register</button></a>
+        <b-dropdown position="is-bottom-left" append-to-body aria-role="menu" trap-focus>
+          <template #trigger>
+            <a class="level-item" role="button">
+              <button>Register</button>
+            </a>
+          </template>
+
+          <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
+            <form @submit.prevent="register">
+              <div class="modal-card" style="width:350px;">
+                <section class="modal-card-body">
+                  <b-field v-if="error">
+                    <span style="font-size: 14px; color: red;">{{ error }}</span>
+                  </b-field>
+
+                  <b-field label="Username">
+                    <b-input type="text" placeholder="Your username" v-model="username" required>
+                    </b-input>
+                  </b-field>
+
+                  <b-field label="Email">
+                    <b-input type="email" placeholder="Your email" v-model="email" required>
+                    </b-input>
+                  </b-field>
+
+                  <b-field label="Password">
+                    <b-input
+                      type="password"
+                      password-reveal
+                      placeholder="Your password"
+                      v-model="password"
+                      required
+                    >
+                    </b-input>
+                  </b-field>
+                </section>
+                <footer class="modal-card-foot columns is-centered">
+                  <b-button
+                    @click.prevent="register"
+                    label="Register"
+                    type="is-primary"
+                    class="column"
+                  />
+                  <!-- <span style="font-size: 16px;">or</span> -->
+                  <!-- <a href="/register">
+                  <button type="button" class="is-danger">Register</button></a> -->
+                </footer>
+              </div>
+            </form>
+          </b-dropdown-item>
+        </b-dropdown>
       </div>
-      <div class="level-item" v-if="isLoggedIn">
+      <div class="level-item trigger" v-if="isLoggedIn">
         <b-dropdown position="is-bottom-left" append-to-body aria-role="menu">
           <template #trigger>
             <a class="level-item" role="button">
-              <span>{{ user.email }}</span>
+              <span>{{ user.displayName }}</span>
               <b-icon icon="menu-down"></b-icon>
             </a>
           </template>
 
           <b-dropdown-item style="outline: 0;" custom>
-            Logged as <b>{{ user.email }}</b>
+            Logged from <b>{{ user.email }}</b>
           </b-dropdown-item>
 
           <hr class="dropdown-divider" />
@@ -107,15 +158,23 @@ export default {
       });
       this.email = '';
       this.password = '';
+      this.username = '';
+    },
+    register() {
+      this.$store.dispatch('auth/register', {
+        email: this.email.trim(),
+        password: this.password,
+        username: this.username,
+      });
     },
     logout() {
-      console.log('logout');
       this.$store.dispatch('auth/logout');
     },
   },
   computed: mapState('auth', ['error', 'isLoggedIn', 'user']),
   data() {
     return {
+      username: '',
       email: '',
       password: '',
     };
