@@ -15,9 +15,7 @@ const mutations = {
     }
   },
   setError(state, error) {
-    if (error) {
-      state.error = error;
-    }
+    state.error = error;
   },
 };
 
@@ -35,6 +33,10 @@ const actions = {
       .catch((error) => {
         commit('setError', error);
       });
+
+    await new Promise((r) => setTimeout(r, 2000));
+    commit('setError', undefined);
+    console.log(state.error);
   },
   register: async ({ commit }, payload) => {
     await firebase
@@ -46,6 +48,10 @@ const actions = {
       .catch((error) => {
         commit('setError', error);
       });
+
+    await new Promise((r) => setTimeout(r, 2000));
+    commit('setError', undefined);
+    console.log(state.error);
   },
   logout: async ({ commit }) => {
     await firebase
@@ -54,6 +60,10 @@ const actions = {
       .catch((error) => {
         commit('setError', error);
       });
+
+    await new Promise((r) => setTimeout(r, 2000));
+    commit('setError', undefined);
+    console.log(state.error);
   },
 };
 

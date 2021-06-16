@@ -11,105 +11,14 @@
         </ul>
       </nav>
       <div class="level-item" v-if="!isLoggedIn">
-        <b-dropdown position="is-bottom-left" append-to-body aria-role="menu" trap-focus>
-          <template #trigger>
-            <a class="level-item" role="button">
-              <button>Login</button>
-            </a>
-          </template>
-
-          <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
-            <form @submit.prevent="login">
-              <div class="modal-card" style="width:300px;">
-                <section class="modal-card-body">
-                  <b-field v-if="error">
-                    <span style="font-size: 14px; color: red;">{{ error }}</span>
-                  </b-field>
-                  <b-field label="Email">
-                    <b-input type="email" placeholder="Your email" v-model="email" required>
-                    </b-input>
-                  </b-field>
-
-                  <b-field label="Password">
-                    <b-input
-                      type="password"
-                      password-reveal
-                      placeholder="Your password"
-                      v-model="password"
-                      required
-                    >
-                    </b-input>
-                  </b-field>
-                </section>
-                <footer class="modal-card-foot columns is-centered">
-                  <b-button @click.prevent="login" label="Login" type="is-primary" class="column" />
-                  <!-- <span style="font-size: 16px;">or</span> -->
-                  <!-- <a href="/register">
-                  <button type="button" class="is-danger">Register</button></a> -->
-                </footer>
-              </div>
-            </form>
-          </b-dropdown-item>
-        </b-dropdown>
-
-        <b-dropdown position="is-bottom-left" append-to-body aria-role="menu" trap-focus>
-          <template #trigger>
-            <a class="level-item" role="button">
-              <button>Register</button>
-            </a>
-          </template>
-
-          <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
-            <form @submit.prevent="register">
-              <div class="modal-card" style="width:350px;">
-                <section class="modal-card-body">
-                  <b-field v-if="error">
-                    <span style="font-size: 14px; color: red;">{{ error }}</span>
-                  </b-field>
-
-                  <b-field label="Username">
-                    <b-input type="text" placeholder="Your username" v-model="username" required>
-                    </b-input>
-                  </b-field>
-
-                  <b-field label="Email">
-                    <b-input type="email" placeholder="Your email" v-model="email" required>
-                    </b-input>
-                  </b-field>
-
-                  <b-field label="Password">
-                    <b-input
-                      type="password"
-                      password-reveal
-                      placeholder="Your password"
-                      v-model="password"
-                      required
-                    >
-                    </b-input>
-                  </b-field>
-                </section>
-                <footer class="modal-card-foot columns is-centered">
-                  <b-button
-                    @click.prevent="register"
-                    label="Register"
-                    type="is-primary"
-                    class="column"
-                  />
-                  <!-- <span style="font-size: 16px;">or</span> -->
-                  <!-- <a href="/register">
-                  <button type="button" class="is-danger">Register</button></a> -->
-                </footer>
-              </div>
-            </form>
-          </b-dropdown-item>
-        </b-dropdown>
+        <a class="level-item" href="/login"><button>Login</button></a>
+        <a class="level-item" href="/register"><button>Register</button></a>
       </div>
       <div class="level-item trigger" v-if="isLoggedIn">
         <b-dropdown position="is-bottom-left" append-to-body aria-role="menu">
           <template #trigger>
             <a class="level-item" role="button">
-              <span>{{ user.displayName }}</span>
-              <b-icon icon="menu-down"></b-icon>
+              <span><span v-if="!user.displayName">...</span>{{ user.displayName }}</span>
             </a>
           </template>
 
@@ -151,15 +60,6 @@ import { mapState } from 'vuex';
 
 export default {
   methods: {
-    async login() {
-      await this.$store.dispatch('auth/login', {
-        email: this.email.trim(),
-        password: this.password,
-      });
-      this.email = '';
-      this.password = '';
-      this.username = '';
-    },
     register() {
       this.$store.dispatch('auth/register', {
         email: this.email.trim(),
