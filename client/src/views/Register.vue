@@ -31,6 +31,14 @@
                 </div>
               </div>
 
+              <b-field>
+                <b-select v-model="position" size="is-medium" expanded>
+                  <option value="student" selected>Student</option>
+                  <option value="parent">Parent</option>
+                  <option value="warden">Warden</option>
+                </b-select>
+              </b-field>
+
               <div class="field">
                 <div class="control">
                   <input class="input is-medium" type="email" placeholder="Email" v-model="email" />
@@ -94,17 +102,10 @@ export default {
         email: this.email.trim(),
         password: this.password,
         username: this.username,
+        position: this.position || 'student',
       });
 
-      if (!this.error && this.user.email) {
-        // eslint-disable-next-line
-        while (!this.user.displayName) {}
-
-        this.$router.replace('/');
-        window.location.reload(true);
-      } else {
-        this.password = '';
-      }
+      if (!this.user.email) this.password = '';
     },
   },
   computed: mapState('auth', ['error', 'isLoggedIn', 'user']),
@@ -113,6 +114,7 @@ export default {
       username: '',
       email: '',
       password: '',
+      position: '',
     };
   },
 };

@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import firebase from '@/db/firebase';
+import db from '@/db';
 
 require('firebase/auth');
 
@@ -25,6 +26,13 @@ const state = {
   error: '',
 };
 
+function writeUserData(user) {
+  db.collection('users')
+    .doc(user.uid)
+    .set(user)
+    .catch((err) => console.log(err));
+}
+
 const actions = {
   login: async ({ commit }, payload) => {
     await firebase
@@ -34,12 +42,16 @@ const actions = {
         commit('setError', error);
       });
 
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
-    console.log(state.error);
   },
   register: async ({ commit }, payload) => {
-    await firebase
+    if (state.user.email) {
+      commit('setError', "You're already signed in");
+      return;
+    }
+
+    const auth = await firebase
       .auth()
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then((res) => res.user.updateProfile({
@@ -49,9 +61,22 @@ const actions = {
         commit('setError', error);
       });
 
-    await new Promise((r) => setTimeout(r, 2000));
-    commit('setError', undefined);
     console.log(state.error);
+    if (!state.error) {
+      const user = {
+        position: payload.position,
+        username: payload.username,
+        uid: auth.user.uid,
+        email: auth.user.email,
+      };
+      writeUserData(user);
+
+      window.location.reload(true);
+      this.$router.replace('/');
+    }
+
+    await new Promise((r) => setTimeout(r, 1500));
+    commit('setError', undefined);
   },
   logout: async ({ commit }) => {
     await firebase
@@ -61,9 +86,8 @@ const actions = {
         commit('setError', error);
       });
 
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
-    console.log(state.error);
   },
 };
 

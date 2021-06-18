@@ -4,7 +4,7 @@
       <div class="columns">
         <div class="column is-two-fifths">
           <h1 class="title is-size-1">{{user.displayName}}</h1>
-          <p class="subtitle">{{user.metadata.lastLoginTime}}</p>
+          <p class="subtitle">Last seen: {{user.metadata.lastSignInTime}}</p>
         </div>
         <div class="column is-2">
           <figure class="image image is-128x128">
