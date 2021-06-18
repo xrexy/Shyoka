@@ -2,6 +2,7 @@
 
 import firebase from '@/db/firebase';
 import db from '@/db';
+import router from '@/router';
 
 require('firebase/auth');
 
@@ -18,10 +19,14 @@ const mutations = {
   setError(state, error) {
     state.error = error;
   },
+  setAdditionalProperties(state, properties) {
+    state.additionalUserProperties = properties;
+  },
 };
 
 const state = {
   user: {},
+  additionalUserProperties: {},
   isLoggedIn: false,
   error: '',
 };
@@ -51,29 +56,27 @@ const actions = {
       return;
     }
 
-    const auth = await firebase
+    await firebase
       .auth()
       .createUserWithEmailAndPassword(payload.email, payload.password)
-      .then((res) => res.user.updateProfile({
-        displayName: payload.username,
-      }))
-      .catch((error) => {
-        commit('setError', error);
-      });
+      .then((res) => {
+        res.user
+          .updateProfile({
+            displayName: payload.username,
+          })
+          .then(() => {
+            window.location.reload(); // i hate this "solution", whatever...
+          });
 
-    console.log(state.error);
-    if (!state.error) {
-      const user = {
-        position: payload.position,
-        username: payload.username,
-        uid: auth.user.uid,
-        email: auth.user.email,
-      };
-      writeUserData(user);
-
-      window.location.reload(true);
-      this.$router.replace('/');
-    }
+        const user = {
+          position: payload.position,
+          username: payload.username,
+          uid: res.user.uid,
+          email: res.user.email,
+        };
+        writeUserData(user);
+      })
+      .catch((error) => commit('setError', error));
 
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
@@ -82,9 +85,22 @@ const actions = {
     await firebase
       .auth()
       .signOut()
-      .catch((error) => {
-        commit('setError', error);
-      });
+      .then(() => router.push('/'))
+      .catch((error) => commit('setError', error));
+
+    await new Promise((r) => setTimeout(r, 1500));
+    commit('setError', undefined);
+  },
+  changePicture: async ({ commit }, payload) => {
+    if (!state.user.email) {
+      commit('setError', 'Invalid user');
+      return;
+    }
+
+    await state.user
+      .updateProfile({ photoURL: payload.pictureURL })
+      .then(() => window.location.reload())
+      .catch((error) => commit('setError', error));
 
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);

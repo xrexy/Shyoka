@@ -1,29 +1,43 @@
 <template>
-  <section class="profile section">
-    <div class="container">
-      <div class="columns">
-        <div class="column is-two-fifths">
-          <h1 class="title is-size-1">{{user.displayName}}</h1>
-          <p class="subtitle">Last seen: {{user.metadata.lastSignInTime}}</p>
+  <section class="profile-section">
+    <div class="container pt-6">
+      <div class="level">
+        <div class="level-item userModule">
+          <h2>{{ user.displayName }}</h2>
+          <span>{{ additionalUserProperties.position }}</span>
         </div>
-        <div class="column is-2">
-          <figure class="image image is-128x128">
-            <img alt="Profile photo" class="is-rounded" src="../assets/default-user.jpg" />
-          </figure>
+        <div class="level-item picModule">
+          <img
+            :src="user.photoURL || require('../assets/default-user.jpg')"
+            alt="Profile picture"
+          />
         </div>
-        <div class="column has-text-grey-light has-text-right-in-desktop">
-          <p class="has-text-weight-light">
-            city
-          </p>
-          <p class="has-text-weight-light">
-            phone
-          </p>
-          <p class="has-text-weight-light">
-            main
-          </p>
+        <div class="level-item propsModule">
+          <h2>Posts:</h2>
+          <h2>Smth:</h2>
+          <h2>Something else:</h2>
         </div>
       </div>
+      <hr>
     </div>
+    <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
+      <div class="card">
+        <div class="card-content">
+          <div class="level">
+            <p class="level-left title is-4 mt-2 pt-2">
+              Change your avatar
+            </p>
+            <b-button class="level-right" type="is-link" @click="changePic">Submit</b-button>
+          </div>
+          <b-field>
+            <b-input v-model="pic" placeholder="Enter picture URL" rounded></b-input>
+          </b-field>
+          <small
+            >&emsp;<span style="color: red" v-if="error">{{ error }}</span></small
+          >
+        </div>
+      </div>
+    </b-modal>
   </section>
 </template>
 
@@ -31,88 +45,86 @@
 import { mapState } from 'vuex';
 
 export default {
-  computed: mapState('auth', ['error', 'isLoggedIn', 'user']),
+  data() {
+    return {
+      pic: '',
+      isCardModalActive: false,
+    };
+  },
+  methods: {
+    async changePic() {
+      if (!this.pic) {
+        this.$store.commit('auth/setError', 'Please enter an image URL');
+        await new Promise((r) => setTimeout(r, 1500));
+        this.$store.commit('auth/setError', undefined);
+        return;
+      }
+
+      if (
+        this.pic.startsWith('http://i.imgur.com/')
+        || this.pic.startsWith('https://i.imgur.com/')
+      ) {
+        this.$store.dispatch('auth/changePicture', { pictureURL: this.pic });
+      } else {
+        this.$store.commit('auth/setError', 'Only i.imgur pictures are allowed.');
+        await new Promise((r) => setTimeout(r, 1500));
+        this.$store.commit('auth/setError', undefined);
+      }
+    },
+  },
+  computed: mapState('auth', ['error', 'isLoggedIn', 'user', 'additionalUserProperties']),
 };
 </script>
 
 <style scoped>
-:root {
-  --brandColor: hsl(166, 67%, 51%);
-  --background: rgb(247, 247, 247);
-  --textDark: hsla(0, 0%, 0%, 0.66);
-  --textLight: hsla(0, 0%, 0%, 0.33);
-}
-
 body {
-  background: var(--background);
+  background: rgb(247, 247, 247);
   height: 100vh;
-  color: var(--textDark);
+  font-family: Ubuntu;
 }
 
-.field:not(:last-child) {
-  margin-bottom: 1rem;
+.level > * {
+  padding-bottom: 3em;
 }
 
-.register {
-  margin-top: 10rem;
-  background: white;
-  border-radius: 10px;
+.userModule h2 {
+  font-size: 300%;
+  font-weight: bold;
 }
 
-.left,
-.right {
-  padding: 4.5rem;
+.userModule span {
+  background-color: #8940d4;
+  border-radius: 45%;
+  padding: 6px 6px;
+  text-transform: uppercase;
+  color: white;
+
+  margin-left: 10px;
+
+  font-size: 78%;
+  font-weight: bold;
 }
 
-.left {
-  border-right: 5px solid var(--background);
+.picModule img {
+  width: 256px;
+  height: 256px;
+
+  border-radius: 100%;
 }
 
-.left .title {
-  font-weight: 800;
-  letter-spacing: -2px;
+.propsModule {
+  display: block;
+  text-align: left;
 }
 
-.left .colored {
-  color: var(--brandColor);
-  font-weight: 500;
-  margin-top: 1rem !important;
-  letter-spacing: -1px;
+@media (max-width: 768px) {
+  .propsModule {
+    text-align: center;
+  }
 }
 
-.left p {
-  color: var(--textLight);
-  font-size: 1.15rem;
-}
-
-.right .title {
-  font-weight: 800;
-  letter-spacing: -1px;
-}
-
-.right .description {
-  margin-top: 1rem;
-  margin-bottom: 1rem !important;
-  color: var(--textLight);
-  font-size: 1.15rem;
-}
-
-.right small {
-  color: var(--textLight);
-}
-
-input {
-  font-size: 1rem;
-}
-
-input:focus {
-  border-color: var(--brandColor) !important;
-  box-shadow: 0 0 0 1px var(--brandColor) !important;
-}
-
-.fab,
-.fas {
-  color: var(--textLight);
-  margin-right: 1rem;
+.propsModule h2 {
+  font-family: 120%;
+  font-weight: bold;
 }
 </style>
