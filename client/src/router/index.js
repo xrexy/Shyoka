@@ -14,13 +14,11 @@ const routes = [
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue'),
-    // meta: { requiresLogin: true },
   },
   {
     path: '/profile',
     name: 'Profile',
     component: () => import('../views/Profile.vue'),
-    meta: { requiresLogin: true },
   },
   {
     path: '/register',
@@ -31,6 +29,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login.vue'),
+  },
+  {
+    path: '/schools',
+    name: 'Schools',
+    component: () => import('../views/Schools.vue'),
   },
 
   { path: '*', redirect: '/' },

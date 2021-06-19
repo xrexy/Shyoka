@@ -40,12 +40,17 @@ function writeUserData(user) {
 
 const actions = {
   login: async ({ commit }, payload) => {
-    await firebase
-      .auth()
-      .signInWithEmailAndPassword(payload.email, payload.password)
-      .catch((error) => {
-        commit('setError', error);
-      });
+    if (state.user.email) {
+      commit('setError', "You're already signed in");
+    } else {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(payload.email, payload.password)
+        .then(() => router.push('/'))
+        .catch((error) => {
+          commit('setError', error);
+        });
+    }
 
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
@@ -53,30 +58,29 @@ const actions = {
   register: async ({ commit }, payload) => {
     if (state.user.email) {
       commit('setError', "You're already signed in");
-      return;
+    } else {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(payload.email, payload.password)
+        .then((res) => {
+          res.user
+            .updateProfile({
+              displayName: payload.username,
+            })
+            .then(() => {
+              window.location.reload(); // i hate this "solution", whatever...
+            });
+
+          const user = {
+            position: payload.position,
+            username: payload.username,
+            uid: res.user.uid,
+            email: res.user.email,
+          };
+          writeUserData(user);
+        })
+        .catch((error) => commit('setError', error));
     }
-
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(payload.email, payload.password)
-      .then((res) => {
-        res.user
-          .updateProfile({
-            displayName: payload.username,
-          })
-          .then(() => {
-            window.location.reload(); // i hate this "solution", whatever...
-          });
-
-        const user = {
-          position: payload.position,
-          username: payload.username,
-          uid: res.user.uid,
-          email: res.user.email,
-        };
-        writeUserData(user);
-      })
-      .catch((error) => commit('setError', error));
 
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
@@ -94,13 +98,12 @@ const actions = {
   changePicture: async ({ commit }, payload) => {
     if (!state.user.email) {
       commit('setError', 'Invalid user');
-      return;
+    } else {
+      await state.user
+        .updateProfile({ photoURL: payload.pictureURL })
+        .then(() => window.location.reload())
+        .catch((error) => commit('setError', error));
     }
-
-    await state.user
-      .updateProfile({ photoURL: payload.pictureURL })
-      .then(() => window.location.reload())
-      .catch((error) => commit('setError', error));
 
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);

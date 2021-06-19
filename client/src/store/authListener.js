@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-console */
 import firebase from '@/db/firebase';
 import store from '@/store/index';
 import db from '@/db';

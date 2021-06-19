@@ -73,15 +73,6 @@ export default {
         email: this.email.trim(),
         password: this.password,
       });
-
-      if (this.user.email) {
-        this.email = '';
-        this.password = '';
-
-        this.$router.replace('/');
-      } else {
-        this.password = '';
-      }
     },
   },
   data() {

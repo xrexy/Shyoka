@@ -77,12 +77,6 @@ export default {
 </script>
 
 <style scoped>
-body {
-  background: rgb(247, 247, 247);
-  height: 100vh;
-  font-family: Ubuntu;
-}
-
 .level > * {
   padding-bottom: 3em;
 }
