@@ -2,21 +2,28 @@
   <article class="media">
     <figure class="media-left">
       <p class="image is-128x128 is-1by1">
-        <img id="school_image" :src="school.photoURL || require('../assets/default-school.jpg')" />
+        <img
+          id="school_image"
+          :src="
+            school.school_image == -1
+              ? require('../assets/default-school.jpg')
+              : school.school_image
+          "
+        />
       </p>
     </figure>
     <div class="media-content">
       <div class="content">
         <div class="level">
           <div class="level-left pb-3">
-            <span id="school_title">{{ school.title }}</span
-            >|<span id="school_city">{{ school.city }}</span>
+            <span id="school_title">{{ school.school_name }}</span
+            >|<span id="school_city">{{ school.school_city }}</span>
           </div>
           <div class="level-right">
-            <span class="mb-3"><b-icon icon="star"></b-icon>{{ school.rating }}</span>
+            <span class="mb-3"><b-icon icon="star"></b-icon>4.1</span>
           </div>
         </div>
-        {{ school.description }}
+        {{ school.school_description }}
       </div>
     </div>
   </article>

@@ -92,19 +92,12 @@ export default {
   --textLight: hsla(0, 0%, 0%, 0.33);
 }
 
-body {
-  background: var(--background);
-  height: 100vh;
-  color: var(--textDark);
-}
-
 .field:not(:last-child) {
   margin-bottom: 1rem;
 }
 
 .register {
   margin-top: 10rem;
-  background: white;
   border-radius: 10px;
 }
 

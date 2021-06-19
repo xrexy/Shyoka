@@ -18,7 +18,7 @@
           <h2>Something else:</h2>
         </div>
       </div>
-      <hr>
+      <hr />
     </div>
     <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
       <div class="card">
@@ -32,9 +32,9 @@
           <b-field>
             <b-input v-model="pic" placeholder="Enter picture URL" rounded></b-input>
           </b-field>
-          <small
-            >&emsp;<span style="color: red" v-if="error">{{ error }}</span></small
-          >
+          <small>
+            &emsp;<span style="color: red" v-if="error">{{ error }}</span>
+          </small>
         </div>
       </div>
     </b-modal>
