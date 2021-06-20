@@ -117,6 +117,10 @@ const actions = {
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
   },
+  registerVote: async ({ commit }, payload) => {
+    console.log(payload);
+    commit();
+  },
 };
 
 export default {

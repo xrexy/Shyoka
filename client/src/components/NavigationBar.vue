@@ -132,7 +132,7 @@ header {
 }
 
 .nav__links li a:hover {
-  color: rgb(103, 63, 143);
+  color: #673f8f;
 }
 
 button:first-child {

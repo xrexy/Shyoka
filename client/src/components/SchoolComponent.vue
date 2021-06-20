@@ -27,15 +27,87 @@
             </div>
           </div>
         </div>
-        {{ school.school_description }}
+        <div v-if="!showBtns">{{ school.school_description }}</div>
+        <div class="level school_bottom" v-if="showBtns">
+          <div class="level-left">
+            <span
+              >{{ school.school_description }}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+              aaaaaaaaaaaaaaaaaaaaaaaa
+              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span
+            >
+          </div>
+          <div class="level-right">
+            <StarRating
+              @rated="rate"
+              v-if="isLoggedIn && additionalUserProperties.position != 'warden'"
+            />
+          </div>
+        </div>
       </div>
     </div>
+
+    <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
+      <div class="card">
+        <div class="card-content">
+          <div class="level">
+            <p class="level-left title is-4 mt-2 pt-2">
+              Change your avatar
+            </p>
+            <b-button class="level-right" type="is-link" @click="changePic">Submit</b-button>
+          </div>
+          <b-field>
+            <b-input v-model="pic" placeholder="Enter picture URL" rounded></b-input>
+          </b-field>
+          <small>
+            &emsp;<span style="color: red" v-if="error">{{ error }}</span>
+          </small>
+        </div>
+      </div>
+    </b-modal>
   </article>
 </template>
 
 <script>
+import StarRating from '@/components/StarRating.vue';
+import { mapState } from 'vuex';
+
 export default {
+  components: { StarRating },
+  computed: mapState('auth', ['additionalUserProperties', 'isLoggedIn', 'user']),
   props: ['school', 'showBtns'],
+  data() {
+    return {
+      isCardModalActive: false,
+    };
+  },
+  methods: {
+    rate(rating) {
+      if (!this.additionalUserProperties || !this.user) return;
+
+      if (this.school.createdBy === this.user.uid) {
+        this.$buefy.snackbar.open({
+          message: "You can't vote for your own school.",
+          type: 'is-link',
+        });
+        return;
+      }
+
+      if (this.additionalUserProperties.position === 'warden') {
+        this.$buefy.snackbar.open({
+          message: "Wardens can't vote for schools.",
+          type: 'is-link',
+        });
+        return;
+      }
+
+      this.$store.dispatch('school/registerVote', {
+        school: this.school,
+        user: this.user,
+        rating,
+      });
+    },
+  },
 };
 </script>
 
@@ -47,8 +119,18 @@ export default {
   }
 
   .level-right .level .button {
-    display: none;;
+    display: none;
   }
+}
+
+.media {
+  overflow: hidden;
+}
+
+.school_bottom .level-left {
+  width: 75%;
+  padding: 0;
+  margin: 0;
 }
 
 .media {

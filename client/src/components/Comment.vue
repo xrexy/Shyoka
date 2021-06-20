@@ -18,22 +18,15 @@
           <br />
           {{ comment.comment }}
           <br />
-          <small @click.prevent="$emit('showReplyModal', { id: comment.comment })"
-            ><a href="#">» Reply</a></small
-          >
         </p>
       </div>
-
-      <CommentReply />
+      <div class="media"></div>
     </div>
   </article>
 </template>
 
 <script>
-import CommentReply from './CommentReply.vue';
-
 export default {
   props: ['comment'],
-  components: { CommentReply },
 };
 </script>

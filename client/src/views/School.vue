@@ -20,7 +20,7 @@
               ></textarea>
             </p>
           </div>
-          <div class="field">
+          <div class="field pb-6">
             <p class="control">
               <button class="button" @click.prevent="postComment">
                 Post comment
@@ -33,30 +33,14 @@
         </div>
       </article>
 
-      <div class="comments-container" v-for="comment in school.comments" :key="comment.comment">
-        <Comment :comment="comment" @showReplyModal="showReplyModal($event)" />
+      <div
+        class="comments-container pt-2"
+        v-for="comment in school.comments"
+        :key="comment.comment"
+      >
+        <Comment :comment="comment" />
       </div>
     </div>
-
-    <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
-      <form class="card">
-        <div class="card-content">
-          <div>
-            <b-field>
-              <b-input
-                placeholder="Name"
-                v-model="commentReply"
-                maxlength="100"
-                minlength="1"
-              ></b-input>
-            </b-field>
-            <small>
-              &emsp;<span style="color: red" v-if="error">{{ error }}</span>
-            </small>
-          </div>
-        </div>
-      </form>
-    </b-modal>
   </div>
 </template>
 
@@ -69,7 +53,10 @@ import SchoolComponent from '@/components/SchoolComponent.vue';
 import Comment from '@/components/Comment.vue';
 
 export default {
-  components: { SchoolComponent, Comment },
+  components: {
+    SchoolComponent,
+    Comment,
+  },
   computed: Object.assign(
     mapState('auth', ['additionalUserProperties', 'isLoggedIn', 'user']),
     mapState('schools', ['error', 'isSuccessfull']),
@@ -79,33 +66,9 @@ export default {
       school: {},
       comments: [],
       comment: '',
-      isCardModalActive: false,
-      commentReply: '',
-      commentReplyID: '',
     };
   },
   methods: {
-    printRating(event) {
-      console.log(event);
-    },
-    showReplyModal(event) {
-      this.isCardModalActive = true;
-      this.commentReplyID = event.id;
-    },
-    postReply() {
-      console.log(this.commentReplyID);
-      console.log(this.commentReply);
-      // this.$store
-      //   .dispatch('schools/addCommentReply', {
-      //     comment: this.comment,
-      //     postedBy: this.user,
-      //     school: this.school,
-      //   })
-      //   .then(() => {
-      //     if (this.isSuccessfull) this.comment = '';
-      //     window.location.reload();
-      //   });
-    },
     postComment() {
       this.$store
         .dispatch('schools/addComment', {
@@ -116,6 +79,7 @@ export default {
         .then(() => {
           if (this.isSuccessfull) this.comment = '';
           window.location.reload();
+          this.$store.commit('schools/setSuccess', false);
         });
     },
   },
@@ -170,7 +134,7 @@ export default {
   }
 }
 
-hr {
-  background: #1a1b1f;
+.ratings .level {
+  text-align: center;
 }
 </style>
