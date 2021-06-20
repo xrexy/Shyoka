@@ -43,6 +43,10 @@ export default {
   }
 }
 
+.media {
+  padding: 0.4em;
+}
+
 .media .media-left {
   margin: 0;
   margin-right: 1em;

@@ -35,6 +35,11 @@ const routes = [
     name: 'Schools',
     component: () => import('../views/Schools.vue'),
   },
+  {
+    path: '/school',
+    name: 'School',
+    component: () => import('../views/School.vue'),
+  },
 
   { path: '*', redirect: '/' },
 ];

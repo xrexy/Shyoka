@@ -16,7 +16,17 @@
     </div>
     <hr />
     <div class="content">
-      <SchoolComponent v-for="school in schools" :key="school.school_id" :school="school" />
+      <router-link
+        v-for="school in schools"
+        :key="school.school_id"
+        :to="{
+          name: 'School',
+          params: { schoolID: school.school_id },
+          query: { schoolID: school.school_id },
+        }"
+      >
+        <SchoolComponent :school="school" />
+      </router-link>
     </div>
     <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
       <form class="card">
@@ -169,11 +179,11 @@ export default {
   }
 }
 
-.content .media:last-child {
-  padding-bottom: 18em;
-}
-
 hr {
   background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.4), transparent);
+}
+
+.content .media:hover {
+  background-color: rgb(230, 230, 230);
 }
 </style>
