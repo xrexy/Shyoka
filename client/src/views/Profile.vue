@@ -13,7 +13,7 @@
           />
         </div>
         <div class="level-item propsModule">
-          <h2>Posts:</h2>
+          <h2 @click="isCardModalActive = true">Posts:</h2>
           <h2>Smth:</h2>
           <h2>Something else:</h2>
         </div>

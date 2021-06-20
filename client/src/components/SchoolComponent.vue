@@ -20,7 +20,11 @@
             >|<span id="school_city">{{ school.school_city }}</span>
           </div>
           <div class="level-right">
-            <span class="mb-3"><b-icon icon="star"></b-icon>4.1</span>
+            <span class="mb-3" v-if="!showBtns"><b-icon icon="star"></b-icon>4.1</span>
+            <div class="level" v-if="showBtns">
+              <span class="level-item mb-3"><b-icon icon="star"></b-icon>4.1</span>
+              <b-button class="level-item" type="is-success">Join</b-button>
+            </div>
           </div>
         </div>
         {{ school.school_description }}
@@ -31,7 +35,7 @@
 
 <script>
 export default {
-  props: ['school'],
+  props: ['school', 'showBtns'],
 };
 </script>
 
@@ -40,6 +44,10 @@ export default {
   .level .level-right {
     margin: 0;
     margin-bottom: 1em;
+  }
+
+  .level-right .level .button {
+    display: none;;
   }
 }
 

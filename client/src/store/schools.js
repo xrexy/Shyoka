@@ -1,4 +1,5 @@
 import db from '@/db';
+import firebase from '@/db/firebase';
 
 const mutations = {
   setError(state, error) {
@@ -71,10 +72,48 @@ const actions = {
         if (canExecute) {
           // eslint-disable-next-line
           if (!payload.school_image) payload.school_image = -1;
-          writeSchoolData({ school_id: response.size + 1001, ...payload }).then((result) => commit('setSuccess', result));
+          writeSchoolData({
+            comments: [],
+            school_id: response.size + 1001,
+            ...payload,
+          }).then((result) => commit('setSuccess', result));
+
+          db.collection('users');
         }
       });
 
+    await new Promise((r) => setTimeout(r, 1500));
+    commit('setError', undefined);
+  },
+  addComment: async ({ commit }, payload) => {
+    const promise = new Promise((resolve) => {
+      if (!payload.comment) {
+        commit('setError', 'Comment must be between 10 and 100 characters');
+      } else if (payload.comment.lenth < 10) {
+        commit('setError', "Your comment can't be shorter than 10 characters");
+      } else if (payload.comment > 100) {
+        commit('setError', "Your comment can't be larger than 100 characters");
+      } else {
+        console.log(payload);
+        db.collection('schools')
+          .doc(payload.school.school_name)
+          .update({
+            comments: firebase.firestore.FieldValue.arrayUnion({
+              comment: payload.comment,
+              postedBy: {
+                uid: payload.postedBy.uid,
+                username: payload.postedBy.displayName,
+                photoURL: payload.postedBy.photoURL === undefined ? -1 : payload.postedBy.photoURL,
+              },
+              replies: [],
+            }),
+          });
+        resolve();
+      }
+    });
+    promise.then(() => {
+      commit('setSuccess', true);
+    });
     await new Promise((r) => setTimeout(r, 1500));
     commit('setError', undefined);
   },

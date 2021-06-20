@@ -93,7 +93,7 @@ import db from '@/db';
 
 export default {
   computed: Object.assign(
-    mapState('auth', ['additionalUserProperties', 'isLoggedIn']),
+    mapState('auth', ['additionalUserProperties', 'isLoggedIn', 'user']),
     mapState('schools', ['error', 'isSuccessfull']),
   ),
   components: {
@@ -142,6 +142,7 @@ export default {
           school_city: this.school_city,
           school_description: this.school_description,
           school_image: this.school_image,
+          createdBy: this.user.uid,
         })
         .then(() => {
           if (this.isSuccessfull) {
@@ -177,6 +178,10 @@ export default {
   .level-left {
     padding-bottom: 1em;
   }
+}
+
+.content {
+  color: black;
 }
 
 hr {
