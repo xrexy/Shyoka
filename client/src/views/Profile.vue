@@ -13,13 +13,39 @@
           />
         </div>
         <div class="level-item propsModule">
-          <h2 @click="isCardModalActive = true">Posts:</h2>
-          <h2>Smth:</h2>
-          <h2>Something else:</h2>
+          <h3>
+            <span style="font-weight: bold">Registered: <br /></span
+            >{{ this.user ? this.user.metadata.creationTime : 'unknown' }}
+          </h3>
+          <br />
+          <span style="font-weight: bold">Last login: <br /></span
+          >{{ this.user ? this.user.metadata.lastSignInTime : 'unknown' }}
+          <br />
+          <br />
+          <h3>
+            <span style="font-weight: bold">Comments:</span>
+            {{ additionalUserProperties.comments ? additionalUserProperties.comments.length : 0 }}
+          </h3>
         </div>
       </div>
       <hr />
+      <div class="comments">
+        <h2 class="title is-3">
+          Comments
+        </h2>
+
+        <div class="pt-4">
+          <div
+            class="comments-container pt-2"
+            v-for="comment in additionalUserProperties.comments"
+            :key="comment.comment"
+          >
+            <ProfileComment :comment="comment" />
+          </div>
+        </div>
+      </div>
     </div>
+
     <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
       <div class="card">
         <div class="card-content">
@@ -44,12 +70,18 @@
 <script>
 import { mapState } from 'vuex';
 
+import ProfileComment from '@/components/ProfileComment.vue';
+
 export default {
+  components: { ProfileComment },
   data() {
     return {
       pic: '',
       isCardModalActive: false,
     };
+  },
+  created() {
+    console.log(this.user);
   },
   methods: {
     async changePic() {
@@ -86,6 +118,11 @@ export default {
   font-weight: bold;
 }
 
+/* .propsModule h3 {
+  text-align: center;
+  font-weight: bold;
+} */
+
 .userModule span {
   background-color: #8940d4;
   border-radius: 45%;
@@ -120,5 +157,10 @@ export default {
 .propsModule h2 {
   font-family: 120%;
   font-weight: bold;
+}
+
+hr {
+  background: black;
+  height: 3px;
 }
 </style>

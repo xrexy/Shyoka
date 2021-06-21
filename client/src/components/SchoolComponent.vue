@@ -20,22 +20,39 @@
             >|<span id="school_city">{{ school.school_city }}</span>
           </div>
           <div class="level-right">
-            <span class="mb-3" v-if="!showBtns"><b-icon icon="star"></b-icon>4.1</span>
+            <span class="mb-3" v-if="!showBtns"
+              ><b-icon icon="star"></b-icon
+              >{{ school.rated.length != 0 ? school.rating / school.rated.length : 0 }}</span
+            >
             <div class="level" v-if="showBtns">
-              <span class="level-item mb-3"><b-icon icon="star"></b-icon>4.1</span>
-              <b-button class="level-item" type="is-success">Join</b-button>
+              <span class="level-item mb-3"
+                ><b-icon icon="star"></b-icon
+                >{{ school.rated.length != 0 ? school.rating / school.rated.length : 0 }}</span
+              >
+              <b-button
+                type="is-danger"
+                outlined
+                v-if="!verify && user && user.uid == school.createdBy"
+                @click.prevent="verify = true"
+                >Delete</b-button
+              >
+              <b-button
+                class="mr-2 ml-2"
+                type="is-danger"
+                v-if="verify"
+                @click.prevent="deleteSchool"
+                >Delete</b-button
+              >
+              <b-button type="is-dark" outlined v-if="verify" @click.prevent="verify = false"
+                >Cancel</b-button
+              >
             </div>
           </div>
         </div>
         <div v-if="!showBtns">{{ school.school_description }}</div>
         <div class="level school_bottom" v-if="showBtns">
           <div class="level-left">
-            <span
-              >{{ school.school_description }}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-              aaaaaaaaaaaaaaaaaaaaaaaa
-              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span
-            >
+            <span>{{ school.school_description }}</span>
           </div>
           <div class="level-right">
             <StarRating
@@ -54,7 +71,7 @@
             <p class="level-left title is-4 mt-2 pt-2">
               Change your avatar
             </p>
-            <b-button class="level-right" type="is-link" @click="changePic">Submit</b-button>
+            <b-button class="level-right" type="is-link">Submit</b-button>
           </div>
           <b-field>
             <b-input v-model="pic" placeholder="Enter picture URL" rounded></b-input>
@@ -74,14 +91,19 @@ import { mapState } from 'vuex';
 
 export default {
   components: { StarRating },
-  computed: mapState('auth', ['additionalUserProperties', 'isLoggedIn', 'user']),
+  computed: mapState('auth', ['additionalUserProperties', 'isLoggedIn', 'user', 'error']),
   props: ['school', 'showBtns'],
   data() {
     return {
       isCardModalActive: false,
+      pic: '',
+      verify: false,
     };
   },
   methods: {
+    deleteSchool() {
+      this.$store.dispatch('schools/deleteSchool', this.school);
+    },
     rate(rating) {
       if (!this.additionalUserProperties || !this.user) return;
 
@@ -101,9 +123,14 @@ export default {
         return;
       }
 
-      this.$store.dispatch('school/registerVote', {
-        school: this.school,
-        user: this.user,
+      this.$store.dispatch('schools/registerVote', {
+        school: {
+          name: this.school.school_name,
+        },
+        user: {
+          uid: this.user.uid,
+        },
+        buefy: this.$buefy,
         rating,
       });
     },

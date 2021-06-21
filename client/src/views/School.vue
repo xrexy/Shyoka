@@ -3,8 +3,11 @@
     <SchoolComponent :school="this.school" showBtns="true" />
     <hr />
     <div class="comments">
-      <h1 class="title is-3">Comments</h1>
-      <article class="media">
+      <h2 class="title is-3">
+        Comments
+      </h2>
+      <h2 style="color: red" v-if="!isLoggedIn">You must be logged in to comment</h2>
+      <article class="media" v-if="isLoggedIn">
         <figure class="media-left">
           <p class="image is-64x64 is-1by1">
             <img :src="user.photoURL || require('../assets/default-user.jpg')" />
@@ -33,12 +36,14 @@
         </div>
       </article>
 
-      <div
-        class="comments-container pt-2"
-        v-for="comment in school.comments"
-        :key="comment.comment"
-      >
-        <Comment :comment="comment" />
+      <div class="pt-4">
+        <div
+          class="comments-container pt-2"
+          v-for="comment in school.comments"
+          :key="comment.comment"
+        >
+          <Comment :comment="comment" />
+        </div>
       </div>
     </div>
   </div>

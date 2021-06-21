@@ -17,9 +17,9 @@ export default {
 
 <style>
 @media (max-width: 768px) {
-.footer {
-  text-align: center;
-}
+  .footer {
+    text-align: center;
+  }
 }
 
 html,

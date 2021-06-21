@@ -4,7 +4,7 @@
       <p class="image is-64x64 is-1by1">
         <img
           :src="
-            comment.postedBy.photoURL == -1
+            !comment.postedBy.photoURL
               ? require('../assets/default-user.jpg')
               : comment.postedBy.photoURL
           "

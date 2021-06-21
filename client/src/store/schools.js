@@ -1,5 +1,6 @@
 import db from '@/db';
 import firebase from '@/db/firebase';
+import router from '@/router';
 
 const mutations = {
   setError(state, error) {
@@ -31,6 +32,16 @@ async function writeSchoolData(school) {
 }
 
 const actions = {
+  deleteSchool: async ({ commit }, school) => {
+    db.collection('schools')
+      .doc(school.school_name)
+      .delete()
+      .then(() => router.push('/schools'))
+      .catch((err) => commit('setError', err));
+
+    await new Promise((r) => setTimeout(r, 1500));
+    commit('setError', undefined);
+  },
   addSchool: async ({ commit }, payload) => {
     // shitties validation known to humankind..
     let doc;
@@ -75,6 +86,8 @@ const actions = {
           writeSchoolData({
             comments: [],
             school_id: response.size + 1001,
+            rating: 0,
+            rated: [],
             ...payload,
           }).then((result) => commit('setSuccess', result));
 
@@ -94,19 +107,26 @@ const actions = {
       } else if (payload.comment > 100) {
         commit('setError', "Your comment can't be larger than 100 characters");
       } else {
-        console.log(payload);
         db.collection('schools')
           .doc(payload.school.school_name)
           .update({
             comments: firebase.firestore.FieldValue.arrayUnion({
               comment: payload.comment,
               postedBy: {
-                uid: payload.postedBy.uid,
                 username: payload.postedBy.displayName,
                 photoURL: payload.postedBy.photoURL === undefined ? -1 : payload.postedBy.photoURL,
               },
-              replies: [],
             }),
+          })
+          .then(() => {
+            db.collection('users')
+              .doc(payload.postedBy.uid)
+              .update({
+                comments: firebase.firestore.FieldValue.arrayUnion({
+                  comment: payload.comment,
+                  postedOn: payload.school.school_name,
+                }),
+              });
           });
         resolve();
       }
@@ -118,8 +138,48 @@ const actions = {
     commit('setError', undefined);
   },
   registerVote: async ({ commit }, payload) => {
-    console.log(payload);
-    commit();
+    const collection = db.collection('schools');
+    const doc = collection.doc(payload.school.name);
+    if (!doc) {
+      commit('setError', "Couldn't load document");
+    } else {
+      const hasVotedPromise = collection
+        .where('school_name', '==', payload.school.name)
+        .where('rated', 'array-contains', payload.user.uid)
+        .get();
+      hasVotedPromise.then((voted) => {
+        if (voted.empty) {
+          const processVote = new Promise((resolve) => {
+            doc
+              .update({
+                rating: firebase.firestore.FieldValue.increment(payload.rating),
+              })
+              .catch((error) => commit('setError', error));
+
+            doc
+              .update({
+                rated: firebase.firestore.FieldValue.arrayUnion(payload.user.uid),
+              })
+              .catch((error) => commit('setError', error));
+
+            resolve();
+          });
+          processVote.then(() => {
+            payload.buefy.snackbar.open({
+              message: `Successfully rated ${payload.school.name} with ${payload.rating} stars!`,
+              type: 'is-success',
+            });
+          });
+        } else {
+          payload.buefy.snackbar.open({
+            message: `You have already voted for ${payload.school.name}!`,
+            type: 'is-link',
+          });
+        }
+      });
+    }
+    await new Promise((r) => setTimeout(r, 1500));
+    commit('setError', undefined);
   },
 };
 
