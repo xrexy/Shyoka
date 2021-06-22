@@ -40,6 +40,16 @@ const routes = [
     name: 'School',
     component: () => import('../views/School.vue'),
   },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('../views/Settings.vue'),
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('../views/Settings.vue'),
+  },
 
   { path: '*', redirect: '/' },
 ];

@@ -7,7 +7,7 @@
           <li><a href="/">Home</a></li>
           <li><a href="/schools">Schools</a></li>
           <li><a href="/about">About Us</a></li>
-          <li><a href="/social">Social</a></li>
+          <li><a href="https://github.com/xrexy/Shyoka" target="_blank">Social</a></li>
         </ul>
       </nav>
       <div class="level-item" v-if="!isLoggedIn">

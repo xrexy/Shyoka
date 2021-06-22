@@ -1,24 +1,19 @@
-# client
+# client - a project by 17330
+
+## Project init
+```
+clone from https://github.com/xrexy/Shyoka.git
+navigate to 'client' folder
+```
 
 ## Project setup
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development (Starts on port :8080)
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## To browse go to https://localhost:8080

@@ -34,7 +34,6 @@
               <b-field>
                 <b-select v-model="position" size="is-medium" expanded>
                   <option value="student" selected>Student</option>
-                  <option value="parent">Parent</option>
                   <option value="warden">Warden</option>
                 </b-select>
               </b-field>
