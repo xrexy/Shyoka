@@ -14,7 +14,13 @@
     <div class="media-content">
       <div class="content">
         <p>
-          <strong>{{ comment.postedBy.username }}</strong>
+          <strong>{{ comment.postedBy.username }}</strong
+          ><small
+            class="pl-2"
+            v-if="school.createdBy == user.uid || comment.postedBy.uid == user.uid"
+            @click.prevent="$emit('delete', comment)"
+            ><a href="#" style="color: red">Delete</a></small
+          >
           <br />
           {{ comment.comment }}
           <br />
@@ -27,6 +33,6 @@
 
 <script>
 export default {
-  props: ['comment'],
+  props: ['comment', 'school', 'user'],
 };
 </script>

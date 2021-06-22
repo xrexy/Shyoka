@@ -42,7 +42,12 @@
           v-for="comment in school.comments"
           :key="comment.comment"
         >
-          <Comment :comment="comment" />
+          <Comment
+            :comment="comment"
+            :school="school"
+            :user="user"
+            @delete="deleteComment($event)"
+          />
         </div>
       </div>
     </div>
@@ -74,6 +79,13 @@ export default {
     };
   },
   methods: {
+    deleteComment(comment) {
+      this.$store.dispatch('schools/deleteComment', {
+        comment,
+        school: this.school,
+        buefy: this.$buefy,
+      });
+    },
     postComment() {
       this.$store
         .dispatch('schools/addComment', {

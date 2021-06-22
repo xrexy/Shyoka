@@ -22,12 +22,16 @@
           <div class="level-right">
             <span class="mb-3" v-if="!showBtns"
               ><b-icon icon="star"></b-icon
-              >{{ school.rated.length != 0 ? school.rating / school.rated.length : 0 }}</span
+              >{{
+                school.rated.length != 0 ? (school.rating / school.rated.length).toFixed(1) : 0
+              }}</span
             >
             <div class="level" v-if="showBtns">
               <span class="level-item mb-3"
                 ><b-icon icon="star"></b-icon
-                >{{ school.rated.length != 0 ? school.rating / school.rated.length : 0 }}</span
+                >{{
+                  school.rated.length != 0 ? (school.rating / school.rated.length).toFixed(1) : 0
+                }}</span
               >
               <b-button
                 type="is-danger"

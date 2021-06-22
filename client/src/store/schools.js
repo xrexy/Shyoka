@@ -32,6 +32,40 @@ async function writeSchoolData(school) {
 }
 
 const actions = {
+  deleteComment: async ({ commit }, payload) => {
+    const deleteCommentFromSchool = new Promise((resolve) => {
+      db.collection('schools')
+        .doc(payload.school.school_name)
+        .update({
+          comments: firebase.firestore.FieldValue.arrayRemove(payload.comment),
+        })
+        .then(() => resolve());
+    });
+    const deleteCommentFromUser = new Promise((resolve) => {
+      deleteCommentFromSchool.then(() => {
+        db.collection('users')
+          .doc(payload.comment.postedBy.uid)
+          .update({
+            comments: firebase.firestore.FieldValue.arrayRemove({
+              comment: payload.comment.comment,
+              postedOn: payload.school.school_name,
+            }),
+          })
+          .then(() => resolve());
+      });
+    });
+
+    deleteCommentFromUser.then(() => payload.buefy.snackbar.open({
+      message: `Deleted ${payload.comment.postedBy.username}'s comment from ${payload.school.school_name}`,
+      actionText: 'Reload',
+      onAction: () => window.location.reload(),
+      duration: 5000,
+      type: 'is-danger',
+    }));
+
+    await new Promise((r) => setTimeout(r, 1500));
+    commit('setError', undefined);
+  },
   deleteSchool: async ({ commit }, school) => {
     db.collection('schools')
       .doc(school.school_name)
@@ -115,6 +149,7 @@ const actions = {
               postedBy: {
                 username: payload.postedBy.displayName,
                 photoURL: payload.postedBy.photoURL === undefined ? -1 : payload.postedBy.photoURL,
+                uid: payload.postedBy.uid,
               },
             }),
           })
