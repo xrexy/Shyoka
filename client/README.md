@@ -1,5 +1,3 @@
-# client - a project by 17330
-
 ## Project init
 ```
 clone from https://github.com/xrexy/Shyoka.git
